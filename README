@@ -1,0 +1,67 @@
+#    Copyright 2012 Merijntje Tak
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, version 3 of the License.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+##############################################################################
+#
+#    newsUpload.sh - Backup files to UseNet
+#
+#    This script automates the encryption, rar'ing and par'ing of Usenet
+#     postings. It can be scheduled with cron to run daily. It is advisable
+#     to use a long encryption password since everyone can download your 
+#     backup and try to bruteforce it. The encryption cipher used is approved
+#     by the NSA for 'top secret'-classified documents, and should be
+#     sufficient for personal use.
+#
+#    Usage:
+#     1. Configure the variables in the script
+#     2. Run the script with two arguments:
+#         1. the name of the file you want to upload (single file, use tar)
+#         2. the name of the posting you want to use in the usenet upload
+#
+#    Example:
+#     ./newsUpload.sh photoAlbum.tgz username-photoAlbum
+#
+#    If the upload was succesfull (no errors, check logfile), your upload
+#     should appear on sites like binsearch.net and nzbindex.nl after 20-30
+#     minutes. You can then download/par/unrar the files with your normal news
+#     download program and decrypt the files using the following command:
+#
+#     $ openssl enc -d -salt -in <filename>.enc -out <filename>
+#
+#    Dependencies:
+#     - rar (tested with RAR 3.93)
+#     - par2 (tested with par2cmdline 0.4)
+#     - openssl (tested with OpenSSL 0.9.8o)
+#     - newspost (tested with newspost 2.1.1, http://newspost.unixcab.org)
+#
+#    Variables used in the script:
+#     TMPDIR - Temporary directory where the script can put the generated
+#               rar and par files. This directory should have enough space for
+#               the file to be uploaded + 10 % (par files)
+#
+#     LOGFILE - Path to a logfile, should be writable
+# 
+#     ENCPW - Password used for the OpenSSL encryption. Please use a very long
+#              string as everyone can download your file and try to bruteforce
+#
+#     NEWSSERVER - Hostname or IP address of your newsserver
+#
+#     NEWSUSER - Optional - Username to be used with your newsserver
+#
+#     NEWSPASS - Optional - Password to be used with your newsserver
+#
+#     NEWSMAIL - Mail address used in the From: field for the Usenet postings
+#
+#     NEWSGROUP - Newsgroup to post to
+#
